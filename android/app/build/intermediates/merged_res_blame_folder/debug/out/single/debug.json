@@ -1,0 +1,82 @@
+[
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/drawable_zine_logo.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/drawable/zine_logo.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/drawable_zine_logo1.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/drawable/zine_logo1.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxxhdpi_new_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxxhdpi/new_launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/drawable_gradient_background.xml.flat",
+        "source": "com.example.your_app_name.app-main-71:/drawable/gradient_background.xml"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxhdpi_new_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxhdpi/new_launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxxhdpi_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxxhdpi/launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/drawable-v21_background.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/drawable-v21/background.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxhdpi_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxhdpi/launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/drawable-v21_launch_background.xml.flat",
+        "source": "com.example.your_app_name.app-main-71:/drawable-v21/launch_background.xml"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-mdpi_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-mdpi/launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xhdpi_new_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xhdpi/new_launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-hdpi_new_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-hdpi/new_launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-mdpi_new_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-mdpi/new_launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-hdpi_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-hdpi/launcher_icon.png"
+    },
+    {
+        "merged": "com.example.your_app_name.app-merged_res-69:/mipmap-xhdpi_launcher_icon.png.flat",
+        "source": "com.example.your_app_name.app-main-71:/mipmap-xhdpi/launcher_icon.png"
+    }
+]

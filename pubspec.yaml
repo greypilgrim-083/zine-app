@@ -52,7 +52,7 @@ dependencies:
   open_file: ^3.5.10
   flutter_local_notifications: ^18.0.0
   flutter_neat_and_clean_calendar: ^0.3.16+36
-  flutter_notification_channel: ^2.0.0
+  # flutter_notification_channel: ^2.0.0  # REMOVED - using flutter_local_notifications instead
   flutter_secure_storage: ^9.2.2
   fluttertoast: ^8.1.2
   font_awesome_flutter: ^10.7.0
@@ -74,6 +74,7 @@ dependencies:
   url_launcher: ^6.3.0
   win32: ^5.9.0
   xml: null
+
 dev_dependencies:
   build_runner: ^2.4.13
   drift_dev: ^2.23.1
@@ -87,6 +88,7 @@ flutter_icons:
 
 flutter_native_splash:
   background_image: "assets/grad.png"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
@@ -140,3 +142,5 @@ fonts:
       #
       # For details regarding fonts from package dependencies,
       # see https://flutter.dev/custom-fonts/#from-packages
+
+# REMOVED the problematic dependency_overrides section

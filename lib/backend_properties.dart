@@ -3,12 +3,16 @@ class Environment {
 }
 
 class BackendProperties {
-  // Option 2: Using AWS EC2 instance (uncomment if needed)
-  static Uri baseUrl = Uri(
-    scheme: 'https',
-    host: 'ec2-15-207-55-211.ap-south-1.compute.amazonaws.com ',
-    port: 3001,
-  );
+  // static Uri baseUrl = Uri(
+  //     scheme: 'https', host: 'zine-backend.ip-ddns.com'
+  //   // host: '20.40.49.214',
+  //   // host: '172.22.0.1',
+  //   // port: 8080,
+  //   // );
+  //   // https://zinebackend-2b7b.onrender.com //'ec2-18-116-38-241.us-east-2.compute.amazonaws.com'
+  // );
+  //neeche wala chalta nahi hai
+  static Uri baseUrl = Uri.parse('https://ec2-18-116-38-241.us-east-2.compute.amazonaws.com');
   static Map<String, String> getHeaders({String? uid}) {
     //TODO: Eventually Bring all Auth headers into the main header
     Map<String, String> headers = {

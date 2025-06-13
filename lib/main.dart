@@ -13,7 +13,17 @@ import './common/navigator.dart';
 
 import 'background/firebase_options.dart';
 import 'database/database.dart';
+//////////
+import 'dart:io';
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
 
+//////////
 final Language _language = Language();
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -44,6 +54,8 @@ Future<void> main() async {
   DataStore store = DefaultStore();
   UserProv userProv = UserProv(dataStore: store, Db: db);
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  HttpOverrides.global = MyHttpOverrides();
+
   runApp(MyApp(store: store, userProv: userProv, secureStorage: secureStorage, db: db));
 }
 
@@ -107,4 +119,5 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
 }

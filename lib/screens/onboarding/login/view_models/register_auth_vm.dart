@@ -100,7 +100,7 @@ class RegisterAuthViewModel extends ChangeNotifier {
         email: data['email'],
         password: data['password'],
       )
-          .timeout(const Duration(minutes: 1), onTimeout: () {
+          .timeout(const Duration(minutes: 5), onTimeout: () {
         throw TimeoutException('The operation timed out after 1 minute.');
       });
 

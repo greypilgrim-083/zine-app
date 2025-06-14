@@ -149,13 +149,13 @@ class _EventTileState extends State<EventTile> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
-                              utf8.decode(
-                                  widget.event.description!.runes.toList()),
+                              widget.event.description!,
                               overflow: TextOverflow.fade,
                               style: const TextStyle(
                                 fontFamily: 'Roboto',
                                 fontSize: 13,
                               ),
+
                             ),
                           ),
                         ),

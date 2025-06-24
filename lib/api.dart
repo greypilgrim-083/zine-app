@@ -1,3 +1,7 @@
+
+
+//dead code, you may remove it if you want
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,6 +10,7 @@ const String serverKey =
     'AAAAbcVwtbU:APA91bET7ksps569G0nG29zoQXlRSf0jcRCsmGMVaimUz9qWl9Gf51Z1qirKwIfPr-Zjr2tiee8ftel-GoMoHer1_uUyMPSdKLlDzoES08CCmr8zmMKpK5lC6CjY0AeGHKpAuHD_bD6R';
 
 Future<void> sendFCMMessage(String topic, String title, String body) async {
+  print('qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
   if (kDebugMode) {
     print('/topics/$topic');
   }

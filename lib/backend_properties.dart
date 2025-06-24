@@ -11,8 +11,7 @@ class BackendProperties {
   //   // );
   //   // https://zinebackend-2b7b.onrender.com //'ec2-18-116-38-241.us-east-2.compute.amazonaws.com'
   // );
-  //neeche wala chalta nahi hai
-  static Uri baseUrl = Uri.parse('https://ec2-18-116-38-241.us-east-2.compute.amazonaws.com');
+  static Uri baseUrl = Uri.parse('https://zine-test-backend.ip-ddns.com/');
   static Map<String, String> getHeaders({String? uid}) {
     //TODO: Eventually Bring all Auth headers into the main header
     Map<String, String> headers = {

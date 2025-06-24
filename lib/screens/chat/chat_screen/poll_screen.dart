@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +52,7 @@ class _PollCreatorScreenState extends State<PollCreatorScreen> {
                 ),
               ),
             ),
-            body: PollCard());
+            body: const PollCard());
       },
     );
   }

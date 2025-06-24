@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timelines_plus/timelines_plus.dart';
@@ -6,8 +5,8 @@ import '../../models/events.dart';
 import '../../theme/color.dart';
 
 class WorkshopTile extends StatelessWidget {
-  List<Events> events;
-  WorkshopTile({required this.events, super.key});
+  final List<Events> events;
+  const WorkshopTile({required this.events, super.key});
 
   @override
   Widget build(BuildContext context) {

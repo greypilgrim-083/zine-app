@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:zineapp2023/utilities/custom_logger.dart';
 
 import '../../../../providers/user_info.dart';
 import '../../../../common/navigator.dart';
 import '../../../../common/routing.dart';
-import '../../../../models/user.dart';
 import '../../repo/auth_repo.dart';
+
+final logger = customLogger();
 
 class LoginAuthViewModel with ChangeNotifier {
   final AuthRepo myRepo;
@@ -68,19 +68,16 @@ class LoginAuthViewModel with ChangeNotifier {
     try {
       String pushToken =
           await userProvider.getFirebaseMessagingToken() ?? 'null';
-      var value = await myRepo
-          .signInWithEmailAndPassword(
-              email: data['email'],
-              password: data['password'],
-              pushToken: pushToken)
-          .timeout(
-        const Duration(minutes: 1), // Set timeout duration to 1 minute
-        onTimeout: () {
-          throw TimeoutException('Sign-in request timed out after 1 minute.');
-        },
-      );
-      print(value);
-      print("pushTOken:${pushToken}");
+      var value = await myRepo.signInWithEmailAndPassword(
+          email: data['email'],
+          password: data['password'],
+          pushToken: pushToken);
+      //   . timeout(
+      // const Duration(minutes: 1), // Set timeout duration to 1 minute
+      // onTimeout: () {
+      //   throw TimeoutException('Sign-in request timed out after 1 minute.');
+      // },
+      // );
       setLoading(false);
       userProvider.updateUserInfo(value!);
 
@@ -93,14 +90,13 @@ class LoginAuthViewModel with ChangeNotifier {
     } on TimeoutException catch (e) {
       // Handle timeout error
       setLoading(false);
-      print('Timeout occurred: ${e.message}');
+      logger.e('Timeout occurred: ${e.message}');
       Fluttertoast.showToast(
           msg: 'Sign-in request timed out. Please try again.',
           toastLength: Toast.LENGTH_LONG,
           backgroundColor: Colors.red);
     } on AuthException catch (e) {
       switch (e.code) {
-        //TODO: ENSURE THAT ERRORS ARE BEING caught here
         case "no-connect":
           errorText = "Connection error. Is your internet working?";
           break;
@@ -130,6 +126,9 @@ class LoginAuthViewModel with ChangeNotifier {
           break;
         case "user_not_verified_email_resent":
           errorText = "Please verify yourself (check your email)";
+          break;
+        case "unknown":
+          errorText = "An unknown error occurred. Please try again later.";
           break;
         default:
           errorText = e.code;

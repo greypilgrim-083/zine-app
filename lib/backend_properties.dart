@@ -13,7 +13,6 @@ class BackendProperties {
   // );
   static Uri baseUrl = Uri.parse('https://zine-test-backend.ip-ddns.com/');
   static Map<String, String> getHeaders({String? uid}) {
-    //TODO: Eventually Bring all Auth headers into the main header
     Map<String, String> headers = {
       // 'stage': Environment.stage, // Add the stage header
     };

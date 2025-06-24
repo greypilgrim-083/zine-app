@@ -6,8 +6,8 @@ import 'package:zineapp2023/screens/events/view_models/events_vm.dart';
 import 'package:zineapp2023/theme/color.dart';
 
 class Events extends StatelessWidget {
-  final selectedDate;
-  const Events({Key? key, this.selectedDate}) : super(key: key);
+  final DateTime? selectedDate;
+  const Events({super.key, this.selectedDate});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class Events extends StatelessWidget {
 
       var tempEvents = eventsVm.tempEvents;
       // var events = eventsVm.events;
-      print("tempevents in events:${tempEvents[0].recruitment?.id}");
+      logger.d("tempevents in events:${tempEvents[0].recruitment?.id}");
 
       return Scaffold(
         extendBody: true,
@@ -34,7 +34,7 @@ class Events extends StatelessWidget {
             ),
           ),
           title: Text(
-            eventsVm.tempEvents.length != 0 ? "EVENT" : "Past Events",
+            eventsVm.tempEvents.isNotEmpty ? "EVENT" : "Past Events",
             style: const TextStyle(
               height: 0.9,
               letterSpacing: 0.3,
@@ -65,7 +65,7 @@ class Events extends StatelessWidget {
                           EventCard(
                             // event: events[i],
                             tempEvent: tempEvents[i],
-                            selectedDate: selectedDate,
+                            selectedDate: selectedDate!,
                           )
                       ],
                     ),

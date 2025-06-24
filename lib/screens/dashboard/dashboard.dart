@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:zineapp2023/components/profile_picture.dart';
 import 'package:zineapp2023/models/user.dart';
 import 'package:zineapp2023/providers/user_info.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -14,9 +13,6 @@ import 'package:zineapp2023/theme/color.dart';
 import 'package:zineapp2023/utilities/string_formatters.dart';
 import 'package:intl/intl.dart';
 import '../../common/routing.dart';
-import '../../models/task_instance.dart';
-import '../../utilities/date_time.dart';
-import '../chat/chat_screen/chat_view.dart';
 import '../tasks/view_models/task_vm.dart';
 import 'package:zineapp2023/models/events.dart';
 
@@ -51,7 +47,7 @@ class _DashboardState extends State<Dashboard> {
         UserModel currUser = userProv.getUserInfo;
         int chatRoomsLength = chatVm.allrooms?.length ?? 0;
         // eventVm.tempGetAllEvent();
-        Events? recentEvent = eventVm.tempEvents.length > 0
+        Events? recentEvent = eventVm.tempEvents.isNotEmpty
             ? eventVm.tempEvents[eventVm.tempEvents.length - 1]
             : null;
         return Scaffold(
@@ -191,8 +187,7 @@ class _DashboardState extends State<Dashboard> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: MediaQuery.of(context)
-                                                        .textScaleFactor *
-                                                    15,
+                                                        .textScaler.scale(15),
                                                 color: const Color(0xff0C72B0)),
                                           ),
                                         ),
@@ -200,8 +195,7 @@ class _DashboardState extends State<Dashboard> {
                                           DateTime.now().day.toString(),
                                           style: TextStyle(
                                               fontSize: MediaQuery.of(context)
-                                                      .textScaleFactor *
-                                                  60,
+                                                      .textScaler.scale(60),
                                               fontWeight: FontWeight.w700,
                                               color: const Color(0xff0C72B0)),
                                           textAlign: TextAlign.center,
@@ -212,8 +206,7 @@ class _DashboardState extends State<Dashboard> {
                                               .toUpperCase(),
                                           style: TextStyle(
                                               fontSize: MediaQuery.of(context)
-                                                      .textScaleFactor *
-                                                  40,
+                                                      .textScaler.scale(40),
                                               fontWeight: FontWeight.w700,
                                               color: const Color(0xffa3d0ec)),
                                           textAlign: TextAlign.center,
@@ -243,7 +236,7 @@ class _DashboardState extends State<Dashboard> {
                                   ),
                                   child: Column(
                                     mainAxisAlignment:
-                                        eventVm.tempEvents.length != 0
+                                        eventVm.tempEvents.isNotEmpty
                                             ? MainAxisAlignment.end
                                             : MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -271,16 +264,15 @@ class _DashboardState extends State<Dashboard> {
                                                   style: TextStyle(
                                                       fontSize: MediaQuery.of(
                                                                   context)
-                                                              .textScaleFactor *
-                                                          25,
+                                                              .textScaler.scale(25  )      ,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: greyText),
                                                 ),
                                               ),
                                             ),
-                                      eventVm.tempEvents.length != 0
-                                          ? Spacer()
+                                      eventVm.tempEvents.isNotEmpty
+                                          ? const Spacer()
                                           : Container(),
 
                                       recentEvent != null
@@ -293,14 +285,14 @@ class _DashboardState extends State<Dashboard> {
                                               textAlign: TextAlign.center,
                                             )
                                           : Container(),
-                                      eventVm.tempEvents.length != 0
-                                          ? Spacer()
+                                      eventVm.tempEvents.isNotEmpty
+                                          ? const Spacer()
                                           : Container(),
 
                                       // const SizedBox(
                                       //   height: 10,
                                       // ),
-                                      eventVm.tempEvents.length != 0
+                                      eventVm.tempEvents.isNotEmpty
                                           ? Container(
                                               margin: const EdgeInsets.all(5),
                                               width: MediaQuery.of(context)

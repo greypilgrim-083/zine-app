@@ -47,11 +47,11 @@ class _HomeState extends State<Home> {
           //     (index){
           //   homeVm.onItemTapped(index);
           // },
-          children: <Widget>[
-            const ChatHome(),
-            const Explore(),
+          children: const <Widget>[
+            ChatHome(),
+            Explore(),
             EventsScreen(),
-            const Dashboard(),
+            Dashboard(),
           ],
         ),
         extendBody: false,
@@ -62,8 +62,8 @@ class _HomeState extends State<Home> {
             // Adjust the margin as needed
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                const BoxShadow(
+              boxShadow: const [
+                BoxShadow(
                   blurRadius: 42.0,
                   color: backgroundGrey,
                 ),

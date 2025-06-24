@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,21 +21,19 @@ import 'chat_view.dart';
 
 class ChatRoom extends StatefulWidget {
   // final dynamic roomName;
-  String? email;
+  final String? email;
   // final String? roomId;
-  Rooms? roomDetail;
+  final Rooms? roomDetail;
 
-  ChatRoom({Key? key, this.roomDetail, this.email}) : super(key: key);
+  const ChatRoom({super.key, this.roomDetail, this.email});
 
   @override
   State<ChatRoom> createState() => _ChatRoomState();
 }
 
 class _ChatRoomState extends State<ChatRoom> {
-  final ScrollController _scrollController = ScrollController();
 
   // Store the last known scroll position
-  double? _lastScrollOffset;
 
   late ChatRoomViewModel chatRoomView;
   late final FocusNode _focusNode;
@@ -46,11 +43,6 @@ class _ChatRoomState extends State<ChatRoom> {
     super.initState();
 
     _saveRoomNameToPreferences();
-    _scrollController.addListener(() {
-      if (_scrollController.hasClients) {
-        _lastScrollOffset = _scrollController.offset;
-      }
-    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       chatRoomView = Provider.of<ChatRoomViewModel>(context, listen: false);
       var db = Provider.of<AppDb>(context, listen: false);
@@ -64,14 +56,14 @@ class _ChatRoomState extends State<ChatRoom> {
 
     _focusNode = FocusNode(
       onKeyEvent: (FocusNode node, KeyEvent evt) {
-        bool is_enter = evt.logicalKey == LogicalKeyboardKey.enter;
+        bool isEnter = evt.logicalKey == LogicalKeyboardKey.enter;
 
-        bool is_shift = HardwareKeyboard.instance.logicalKeysPressed
+        bool isShift = HardwareKeyboard.instance.logicalKeysPressed
                 .contains(LogicalKeyboardKey.shiftLeft) ||
             HardwareKeyboard.instance.logicalKeysPressed
                 .contains(LogicalKeyboardKey.shiftRight);
 
-        if (!is_shift && is_enter) {
+        if (!isShift && isEnter) {
           if (evt is KeyDownEvent) {
             _sendMessage();
           }
@@ -128,16 +120,7 @@ class _ChatRoomState extends State<ChatRoom> {
   Widget build(BuildContext context) {
     return Consumer3<ChatRoomViewModel, DashboardVm, UserProv>(
       builder: (context, chatVm, dashVm, userProv, _) {
-        // if (_lastScrollOffset != null && _scrollController.hasClients) {
-        //   // Defer the scroll to the next frame
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     if (_scrollController.hasClients &&
-        //         _lastScrollOffset! <=
-        //             _scrollController.position.maxScrollExtent) {
-        //       _scrollController.jumpTo(_lastScrollOffset!);
-        //     }
-        //   });
-        // }
+
         final roomName = widget.roomDetail!.name.toString();
         final image = widget.roomDetail!.dpUrl.toString();
         // chatVm.room = widget.roomDetail!.id.toString();
@@ -180,7 +163,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       return ChatDescription(
                           roomName: roomName,
                           image: image,
-                          data: listOfUsers != null ? listOfUsers : []);
+                          data: listOfUsers ?? []);
                     }));
                   }
                 },
@@ -235,7 +218,7 @@ class _ChatRoomState extends State<ChatRoom> {
                                   : Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(
+                                        color: Colors.blue.withValues(alpha:
                                             0.1), // Subtle background color
                                         borderRadius: BorderRadius.circular(10),
                                       ),

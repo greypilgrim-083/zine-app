@@ -10,7 +10,7 @@ import 'dp_change_repo.dart';
 
 class DpChangeScreen extends StatelessWidget {
   final String title;
-  DpChangeScreen({this.title = 'Profile Picture', super.key});
+  const DpChangeScreen({this.title = 'Profile Picture', super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class DpChangeScreen extends StatelessWidget {
           ),
           body: Center(
               child: Expanded(
-                  child: Container(
+                  child: SizedBox(
                       width: double.infinity,
                       child: Hero(tag: "profilePic", child: dp)))));
     });

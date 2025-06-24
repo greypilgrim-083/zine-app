@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drift/drift.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,7 +44,7 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   //===================================================NEWER CODE====================================================//
   final chatP = ChatRepo();
-  Map<String, dynamic> _subscriptions = {};
+  final Map<String, dynamic> _subscriptions = {};
 
   dynamic allData;
   dynamic replyTo;
@@ -63,8 +62,8 @@ class ChatRoomViewModel extends ChangeNotifier {
   //-------------------------------------------------message fetching using http--------------------//
   List<MessageModel> messages = [];
   Map<String, RoomMemberModel> currentRoomMembers = {};
-  bool _isLoaded = false; //It should be true at
-  bool _isError = false;
+  final bool _isLoaded = false; //It should be true at
+  final bool _isError = false;
   bool _isNewRoomData = false; //track new Room data
   bool loadingAPIMessages = false;
   Set<String> activeRoomSubscriptions = {};
@@ -85,24 +84,23 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   void initializeWebSocket() {
     String uid = userProv.getUserInfo.uid!;
-    print("\n----------initializing web socket------------\n ");
     _client = StompClient(
       config: StompConfig(
         useSockJS: true,
         url: BackendProperties.websocketUri.toString(),
         onConnect: onConnectCallback,
         stompConnectHeaders: {"Authorization": uid},
-        onWebSocketError: (dynamic error) => print('WebSocket error: $error'),
-        // onDebugMessage: (dynamic message) => print('Debug: $message'),
+        onWebSocketError: (dynamic error) =>
+            logger.e('WebSocket error: $error'),
       ),
     );
-    print("Activating WebSocket client");
     _client.activate();
+    logger.i("WebSocket initialized with uid: $uid");
   }
 
   void onConnectCallback(StompFrame connectFrame) {
+    logger.i("WebSocket connected: ${connectFrame.headers}");
     isConnected = true;
-    print("inside the callback");
   }
 
   // void assignGlobalKeystoMessages() {
@@ -112,7 +110,7 @@ class ChatRoomViewModel extends ChangeNotifier {
   // }
 
   void subscribeToActiveMember(String currRoomID, AppDb db) {
-    final subscription = _client.subscribe(
+     _client.subscribe(
         destination: "/room/$currRoomID/active-users",
         // headers: BackendProperties.getHeaders(),
         headers: {"roomId": currRoomID},
@@ -164,7 +162,7 @@ class ChatRoomViewModel extends ChangeNotifier {
 
           if (messageRecieved.update == 'poll-update' &&
               messageRecieved.pollUpdate != null) {
-            print("received poll update");
+            logger.d("Received poll update");
             //Handle Poll Update
             int pollIndex = messages.indexWhere(
               (element) => element.id == messageRecieved.pollUpdate!.chatItemId,
@@ -212,20 +210,20 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   //---------------------------------------------MODIFY: ADD multiple subscribtion->----------------//
   void unsubscribeFromRoom(String roomId) {
-    // logger.i("attempting to unsubscribe roomId:$roomId");
+    logger.i("attempting to unsubscribe roomId:$roomId");
     final subscription = _subscriptions[roomId];
     if (subscription != null) {
       try {
         // subscription.unsubscribe(unsubscribeHeaders: {});
         subscription();
-        print("Unsubscribed from room: $roomId");
+        logger.i("Unsubscribed from room: $roomId");
       } catch (e) {
-        print("Error unsubscribing from room $roomId: $e");
+        logger.e("Error unsubscribing from room $roomId: $e");
       } finally {
         _subscriptions.remove(roomId);
       }
     } else {
-      print("No active subscription found for room: $roomId");
+      logger.w("No active subscription found for room: $roomId");
     }
   }
 
@@ -240,16 +238,11 @@ class ChatRoomViewModel extends ChangeNotifier {
   }
 
   void scrollToFocusedMessage(int? messageId) {
-    // notifyListeners(); //
-    print("inside the scrollToFocusedMessage $messageId");
     if (messageId == null) return;
     final key = messageKeys[messageId];
-    print(key);
     if (key != null) {
       final context = key.currentContext;
-      print(context);
       if (context != null) {
-        print(context);
         Scrollable.ensureVisible(
           context,
           duration: const Duration(milliseconds: 300),
@@ -258,10 +251,10 @@ class ChatRoomViewModel extends ChangeNotifier {
     }
   }
 
-  void sendMessage(String user_message, String roomName) async {
+  void sendMessage(String userMessage, String roomName) async {
     // int? roomId=roomNameToId[roomName];
     if (!_client.connected) {
-      print("Not connected to the WebSocket server.");
+      logger.e("Not connected to the WebSocket server.");
       return;
     }
 
@@ -269,7 +262,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       "type": "text",
       "sentFrom": userProv.getUserInfo.id!,
       "roomId": int.parse(currRoomId),
-      "text": {"content": user_message.trim()},
+      "text": {"content": userMessage.trim()},
       "replyTo": replyTo,
     };
 
@@ -282,9 +275,9 @@ class ChatRoomViewModel extends ChangeNotifier {
         destination: "/app/message",
         body: jsonBody,
       );
-      print("\n-------message Sent--------\n");
+      logger.i("Message sent: $jsonBody");
     } catch (e) {
-      print('Not connected to the WebSocket server.$e');
+      logger.e('Not connected to the WebSocket server.$e');
     }
 
     notifyListeners();
@@ -306,13 +299,9 @@ class ChatRoomViewModel extends ChangeNotifier {
   var fMessaging = FirebaseMessaging.instance;
 
   void userReplyText(MessageModel message) {
-    // print("inside the userReplyText");
-    print(message);
-
     selectedReplyMessage = message;
     replyTo = message.id;
     replyUsername = message.sender!.name.toString();
-    print("reply in user Reply:${replyTo.runtimeType}");
 
     replyfocus.requestFocus();
 
@@ -336,9 +325,9 @@ class ChatRoomViewModel extends ChangeNotifier {
   }
 
   //-----------------------------------------------------Update LastSeen to Room------------------------------------//
-  dynamic updateSeen(String email_id, String room_id, DateTime userLastSeen,
+  dynamic updateSeen(String emailId, String roomId, DateTime userLastSeen,
       DateTime lastMessageTimestamp, int unreadMessages) async {
-    Uri url = BackendProperties.updateLastSeenUri(email_id, room_id);
+    Uri url = BackendProperties.updateLastSeenUri(emailId, roomId);
     String uid = userProv.getUserInfo.uid!;
     // print("inside teh updateSeen for email:$email_id and roomid:$room_id");
     try {
@@ -359,12 +348,12 @@ class ChatRoomViewModel extends ChangeNotifier {
         body: jsonEncode(jsonData),
       );
       if (response.statusCode == 200) {
-        // print("seen for room:$room_id updated");
+        logger.t("Seen for room: $roomId updated");
       } else {
-        print("error occure:During put operation");
+        logger.e("Error occurred during PUT operation");
       }
     } catch (e) {
-      print("some error During put operation:$e");
+      logger.e("Error during PUT operation: $e");
     }
   }
 
@@ -379,7 +368,7 @@ class ChatRoomViewModel extends ChangeNotifier {
   }
 
 //------------------------------------------------------INFO about Active member-----------------------------//
-  List<RoomMemberModel>? _activeMembers = [];
+  final List<RoomMemberModel> _activeMembers = [];
   List<RoomMemberModel>? get activeMembers => _activeMembers;
 
   //------------------------------------------------------------chat text value-------------------------------------------//
@@ -415,7 +404,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       List<RoomMemberModel>? allRoomMembers =
           await chatP.fetchTotalActiveMember(roomId);
       // logger.d("check totalactivemember:${allRoomMembers.length} ");
-      if (allRoomMembers != null && allRoomMembers.isNotEmpty) {
+      if (allRoomMembers.isNotEmpty) {
         List<int> memberIds = [];
         await db.batch((batch) async {
           for (RoomMemberModel roomMember in allRoomMembers) {
@@ -494,14 +483,13 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   //-----------------------------------------------------------save RoomDetails to local DB-------------------------------------------//
   static List<RoomsTableCompanion>? _apiRoomData;
-  List<Room>? _toDeleteRoomData;
 
   Future<List<Rooms>?> saveRoomsToLocalDb(
       List<Rooms>? allRooms, AppDb db) async {
     try {
       for (Rooms room in allRooms!) {
         final roomCompanion = RoomsTableCompanion(
-            id: room.id != null ? drift.Value(room.id!) : drift.Value.absent(),
+            id: room.id != null ? drift.Value(room.id!) : const drift.Value.absent(),
             name: drift.Value(room.name),
             description: drift.Value(room.description),
             type: drift.Value(room.type),
@@ -511,14 +499,14 @@ class ChatRoomViewModel extends ChangeNotifier {
             lastMessageTimestamp: drift.Value(room.lastMessageTimestamp),
             unreadMessages: drift.Value(room.unreadMessages),
             userLastSeen: drift.Value(room.userLastSeen),
-            isSynced: drift.Value(true));
+            isSynced: const drift.Value(true));
         _apiRoomData?.add(roomCompanion);
         await db.insertRoomToDB(roomCompanion);
         fetchRoomMembersAndStoreInDB(db, room.id.toString());
       }
       // logger.d("Saved All Rooms to Local DB");
     } catch (e) {
-      print('Error saving rooms to local DB: $e');
+      logger.e('Error saving rooms to local DB: $e');
     }
     return null;
   }
@@ -547,7 +535,7 @@ class ChatRoomViewModel extends ChangeNotifier {
 
       return userProjectData;
     } catch (e) {
-      print("Error fetching room data: $e");
+      logger.e("Error fetching room data: $e");
       return [];
     }
   }
@@ -560,7 +548,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       List<Room> temp = await db.getAllAnnouncementsDB();
       List<Rooms> announcementData;
       // Map the fetched data to Rooms objects
-      print("-----announcemnet data------------");
+      logger.t("Fetched Announcement data: $temp");
       announcementData = temp.map((room) {
         return Rooms(
           id: room.id,
@@ -574,11 +562,11 @@ class ChatRoomViewModel extends ChangeNotifier {
           userLastSeen: room.userLastSeen,
         );
       }).toList();
-      print("annoucement length:${announcementData.length}");
+      logger.t("annoucement length:${announcementData.length}");
       // _isRoomLoaded = true; //this will help chatScreen for data available or not
       return announcementData;
     } catch (e) {
-      print("Error fetching room data: $e");
+      logger.e("Error fetching room data: $e");
       return [];
     }
   }
@@ -668,8 +656,8 @@ class ChatRoomViewModel extends ChangeNotifier {
                 numVotes: drift.Value(option.numVotes),
                 voterId: option.voterIds != null &&
                         option.voterIds!.contains(userProv.getUserInfo.id)
-                    ? drift.Value(true)
-                    : drift.Value(false),
+                    ? const drift.Value(true)
+                    : const drift.Value(false),
               );
 
               await db
@@ -679,7 +667,7 @@ class ChatRoomViewModel extends ChangeNotifier {
           }
 
           // Handle file data
-          if (message.file?.uri != null && message.file?.uri != "") {
+          if (message.file?.uri != null && message.file?.uri.toString() != "") {
             try {
               // Save the file locally (async operation)
               saveFileToLocalStorage(message.file!.uri.toString(),
@@ -718,25 +706,25 @@ class ChatRoomViewModel extends ChangeNotifier {
           final messageCompanion = MessagesTableCompanion(
             id: message.id != null
                 ? drift.Value(message.id!)
-                : drift.Value.absent(),
+                : const drift.Value.absent(),
             type: drift.Value(message.type.toString().split('.').last),
             timestamp: drift.Value(message.timestamp!.millisecondsSinceEpoch),
             sentFromId: message.sender?.id != null
-                ? drift.Value(message.sender!.id!)
-                : drift.Value.absent(),
+                ? drift.Value(message.sender!.id)
+                : const drift.Value.absent(),
             replyToId: message.replyToId != null
                 ? drift.Value(message.replyToId)
-                : drift.Value.absent(),
-            isSynced: drift.Value(true),
+                : const drift.Value.absent(),
+            isSynced: const drift.Value(true),
             textData: message.type == MessageType.text && message.text != null
                 ? drift.Value(message.text!.content)
-                : drift.Value.absent(),
+                : const drift.Value.absent(),
             pollId: message.type == MessageType.poll && message.id != null
                 ? drift.Value(message.id!)
-                : drift.Value.absent(),
+                : const drift.Value.absent(),
             fileId: message.type == MessageType.file && message.id != null
                 ? drift.Value(message.id!)
-                : drift.Value.absent(),
+                : const drift.Value.absent(),
             roomId: drift.Value(int.parse(messageRoomId.toString())),
           );
 
@@ -753,14 +741,14 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   //--------------------------------------------------fetchAllMessage-----------------------------------------------//
 
+  // ignore: non_constant_identifier_names
   Future<void> fetchAllMessagesFromAPI_andStoreInDB(
       AppDb db, String roomID) async {
     try {
       loadingAPIMessages = true;
-      List<MessageResponseModel>? allMessages =
-          roomID != null ? await chatP.getChatMessages(roomID) : [];
+      List<MessageResponseModel>? allMessages = await chatP.getChatMessages(roomID) ;
       loadingAPIMessages = false;
-      if (allMessages!.isEmpty) {
+      if (allMessages.isEmpty) {
         return;
       }
       logger.d("Fetched Messages from API");
@@ -808,7 +796,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       for (var option in pollOptions) {
         pollOptionMap.putIfAbsent(option.pollId, () => []).add(
               PollOption(
-                id: option.id!,
+                id: option.id,
                 value: option.value,
                 numVotes: option.numVotes,
                 voterIds:
@@ -898,7 +886,7 @@ class ChatRoomViewModel extends ChangeNotifier {
     } catch (e) {
       logger.e("Error in stage1:messagePIPELINE: $e");
     } finally {
-      messages = List.from(messages!);
+      messages = List.from(messages);
       notifyListeners();
     }
 
@@ -994,22 +982,21 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   Widget showProfileImage(String imagePath,
       {double width = 50.0, height = 50.0, radius = 10.0}) {
-    // print("\n inside showProfileImage , imagePath:${imagePath}");
     try {
       return ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: Image.file(
           File(imagePath),
-          fit: BoxFit.cover, // Ensures the image covers the circle
-          width: width, // Set to 2 * radius
-          height: height, // Set to 2 * radius
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
         ),
       );
     } catch (e) {
-      print("NO Valid filepath: $e");
-      return ClipOval(
+      logger.e("Error displaying profile image: $e");
+      return const ClipOval(
         child: Icon(
-          Icons.person, // Error icon
+          Icons.person,
           size: 40,
           color: Colors.grey,
         ),
@@ -1025,31 +1012,24 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   Color _getContrastingTextColor(Color backgroundColor) {
     double luminance = backgroundColor.computeLuminance();
-    return luminance > 0.5
-        ? Colors.black
-        : Colors.white; // Light BG → Dark Text, Dark BG → Light Text
+    return luminance > 0.5 ? Colors.black : Colors.white;
   }
 
   Widget customUserName(String? name, {double radius = 50.0}) {
-    // print("inside teh customUserName");
-    name = name == null ? "zine" : name;
+    name = name ?? "zine";
     Color backgroundColor = _generateBackgroundColor(name);
     Color textColor = _getContrastingTextColor(backgroundColor);
     return ClipRRect(
-        borderRadius:
-            BorderRadius.circular(radius), // Background color of the avatar
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
           width: 50,
           height: 50,
-          color: _generateBackgroundColor(name).withOpacity(0.8),
+          color: _generateBackgroundColor(name).withValues(alpha: 0.8),
           child: Center(
             child: Text(
-              name.substring(0, 1).toUpperCase(), // Fallback text
+              name.substring(0, 1).toUpperCase(),
               style: TextStyle(
-                  // fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: textColor, // Text color
-                  fontFamily: 'Poppins'),
+                  fontSize: 30, color: textColor, fontFamily: 'Poppins'),
             ),
           ),
         ));
@@ -1057,9 +1037,7 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   void sendPollResponse(int messageId, int optionId) {
     if (!_client.connected) {
-      if (kDebugMode) {
-        print("Not connected to the WebSocket server.");
-      }
+      logger.e("Not connected to the WebSocket server.");
       return;
     }
 
@@ -1081,8 +1059,6 @@ class ChatRoomViewModel extends ChangeNotifier {
     }
 
     messages[pollIndex].poll!.lastVoted = optionId;
-    print(
-        "_messages LastVoted updated to ${messages[pollIndex].poll!.lastVoted}");
     int optionIndex = messages[pollIndex].poll!.pollOptions.indexWhere(
           (element) => element.id == optionId,
         );
@@ -1092,30 +1068,22 @@ class ChatRoomViewModel extends ChangeNotifier {
     notifyListeners();
 
     final jsonBody = json.encode(messageData);
-    if (kDebugMode) {
-      print("Send Poll update $jsonBody");
-    }
+    logger.t('messageData: $messageData');
 
     try {
       _client.send(
         destination: "/app/poll-vote",
         body: jsonBody,
       );
-      if (kDebugMode) {
-        print("\n-------poll update Sent--------\n");
-      }
+      logger.i("Vote Sent.");
     } catch (e) {
-      if (kDebugMode) {
-        print('Not connected to the WebSocket server.$e');
-      }
+      logger.e('Not connected to the WebSocket server.$e');
     }
   }
 
   void sendPoll(String title, List<String> options, String description) async {
     if (!_client.connected) {
-      if (kDebugMode) {
-        print("Not connected to the WebSocket server.");
-      }
+      logger.e("Not connected to the WebSocket server.");
       return;
     }
 
@@ -1124,7 +1092,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       "poll": {
         'title': title,
         'pollOptions': options,
-        'description': description ?? ''
+        'description': description
       },
       "timestamp": DateTime.now()
           .millisecondsSinceEpoch, // or DateTime.now().toIso8601String()
@@ -1135,22 +1103,15 @@ class ChatRoomViewModel extends ChangeNotifier {
       messageData['replyTo'] = replyTo;
     }
     final jsonBody = json.encode(messageData);
-    if (kDebugMode) {
-      print("Send Poll body $jsonBody");
-    }
-
+    logger.t('messageData: $messageData');
     try {
       _client.send(
         destination: "/app/message",
         body: jsonBody,
       );
-      if (kDebugMode) {
-        print("\n-------poll Sent--------\n");
-      }
+      logger.i("Poll Sent.");
     } catch (e) {
-      if (kDebugMode) {
-        print('Not connected to the WebSocket server.$e');
-      }
+      logger.e('Not connected to the WebSocket server.$e');
     }
   }
 
@@ -1199,7 +1160,7 @@ class ChatRoomViewModel extends ChangeNotifier {
       _isFileReady = true;
       notifyListeners();
 
-      print("Selected filename ${basename(file.path)}");
+      logger.d("Selected filename ${basename(file.path)}");
     } else {
       _isFileLoading = false;
       notifyListeners();
@@ -1208,7 +1169,9 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   Future<File?> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+    var filePath = result?.files.single.path;
+    logger.i("Picked File");
+    logger.d("File path: $filePath");
     return result != null ? File(result.files.single.path!) : null;
   }
 
@@ -1243,15 +1206,11 @@ class ChatRoomViewModel extends ChangeNotifier {
 
         if (responseData != null && responseData.containsKey('url')) {
           Uri url = Uri.parse(responseData['url']);
-          if (kDebugMode) {
-            print("Got File url ${url.toString()}");
-          }
+          logger.d("Got File url ${url.toString()}");
           _publicId = responseData['publicId'];
           return url;
         } else {
-          if (kDebugMode) {
-            print('Response does not contain a "url" field');
-          }
+          logger.e('Response does not contain a "url" field');
           return null;
         }
       } else {
@@ -1259,10 +1218,7 @@ class ChatRoomViewModel extends ChangeNotifier {
             'File upload failed with status: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle any errors
-      if (kDebugMode) {
-        print('Error uploading file: $e');
-      }
+      logger.e('Error uploading file: $e');
       return null;
     } finally {
       _isUploading = false;
@@ -1282,17 +1238,18 @@ class ChatRoomViewModel extends ChangeNotifier {
       if (response.statusCode != 200) {
         throw Exception('Failed with status code: ${response.statusCode}');
       }
+      logger.d('File Deleted.');
     } catch (e) {
-      print('Error occurred: $e');
-      return null; // Return null or handle the error as needed
+      logger.w(
+          'Cancel Upload Failed. File is probably not deleted from backend: $e');
     }
   }
 
   void sendFile(String description) async {
     if (!_client.connected) {
-      if (kDebugMode) {
-        print("Not connected to the WebSocket server.");
-      }
+
+        logger.e("Not connected to the WebSocket server.");
+
       return;
     }
 
@@ -1308,22 +1265,16 @@ class ChatRoomViewModel extends ChangeNotifier {
       messageData['replyTo'] = replyTo;
     }
     final jsonBody = json.encode(messageData);
-    if (kDebugMode) {
-      print("Send Poll body $jsonBody");
-    }
 
+    logger.t('messageData: $messageData');
     try {
       _client.send(
         destination: "/app/message",
         body: jsonBody,
       );
-      if (kDebugMode) {
-        print("\n-------File Sent--------\n");
-      }
+      logger.d('Message Sent');
     } catch (e) {
-      if (kDebugMode) {
-        print('Not connected to the WebSocket server.$e');
-      }
+      logger.e('Not connected to the WebSocket server.$e');
     }
     _fileName = '';
     _fileUri = '';
@@ -1336,10 +1287,9 @@ class ChatRoomViewModel extends ChangeNotifier {
 
   void addRouteListener(
       BuildContext context, var room, var user, UserProv userProv) {
-    ModalRoute.of(context)?.addScopedWillPopCallback(() {
-      // roomLeft(room, user, userProv);
+
+    ModalRoute.of(context)?.popped.then((_) {
       updateUnreadMessagesToZero(currRoomId);
-      return Future.value(true);
     });
   }
 

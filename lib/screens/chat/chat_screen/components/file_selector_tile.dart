@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img; // Add `image` package in pubspec.yaml
+// Add `image` package in pubspec.yaml
 import 'package:zineapp2023/screens/chat/chat_screen/view_model/chat_room_view_model.dart';
 import 'package:zineapp2023/theme/color.dart';
 
 class FileSelectorTile extends StatelessWidget {
   final ChatRoomViewModel chatVm;
-  FileSelectorTile(
+  const FileSelectorTile(
     this.chatVm, {
     super.key,
   });
@@ -58,8 +58,8 @@ class FileSelectorTile extends StatelessWidget {
   }
 
   Widget _buildImagePreview(String imagePath, BuildContext context) {
-    final maxHeight = 150.0; // Fixed max height
-    final maxWidth = 150.0; // Fixed max width
+    const maxHeight = 150.0; // Fixed max height
+    const maxWidth = 150.0; // Fixed max width
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),

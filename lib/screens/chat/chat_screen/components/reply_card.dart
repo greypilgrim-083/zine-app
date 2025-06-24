@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:zineapp2023/screens/chat/chat_screen/view_model/chat_room_view_model.dart';
 import 'package:zineapp2023/theme/color.dart';
@@ -19,7 +18,7 @@ class ReplyCard extends StatelessWidget {
             child: Text(
               "Replying to ${chatVm.selectedReplyMessage.sender!.name}",
               textAlign: TextAlign.left,
-              style: TextStyle(
+              style: const TextStyle(
                   color: greyText, fontSize: 12, fontWeight: FontWeight.w500),
             ),
           ),
@@ -31,7 +30,7 @@ class ReplyCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(15.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 spreadRadius: 1,
                 blurRadius: 6,
               ),

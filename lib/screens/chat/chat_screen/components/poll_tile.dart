@@ -1,11 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:zineapp2023/models/message.dart';
 import 'package:zineapp2023/screens/chat/chat_screen/view_model/chat_room_view_model.dart';
 
-import '../../../../providers/user_info.dart';
 
 // User Messages (Right side)
 const Color userColor =
@@ -43,10 +40,10 @@ class PollTile extends StatefulWidget {
     required this.isUser,
     required this.onVote,
     required this.group,
-    Key? key,
+    super.key,
     required this.message,
     this.leading,
-  }) : super(key: key);
+  });
 
   @override
   State<PollTile> createState() => _PollTileState();
@@ -100,7 +97,7 @@ class _PollTileState extends State<PollTile> {
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: BoxDecoration(
           color: widget.isUser ? userColor : otherColor,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0),topRight: Radius.circular(20.0),bottomLeft: widget.isUser?Radius.circular(20.0):Radius.circular(0.0),bottomRight: widget.isUser?Radius.circular(0.0):Radius.circular(20.0)),
+          borderRadius: BorderRadius.only(topLeft: const Radius.circular(20.0),topRight: const Radius.circular(20.0),bottomLeft: widget.isUser?const Radius.circular(20.0):const Radius.circular(0.0),bottomRight: widget.isUser?const Radius.circular(0.0):const Radius.circular(20.0)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +227,7 @@ class _PollTileState extends State<PollTile> {
             // Total Votes
             Text(
               'Total votes: $totalVotes',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
               ),

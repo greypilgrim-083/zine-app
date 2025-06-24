@@ -3,17 +3,13 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:zineapp2023/models/message.dart';
 import 'package:zineapp2023/screens/chat/chat_screen/view_model/chat_room_view_model.dart';
 
-import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
 
-String DOWNLOAD_PATH = '/storage/emulated/0/Download';
+const  DOWNLOAD_PATH = '/storage/emulated/0/Download';
 
 const Color userColor = Color.fromARGB(255, 104, 181, 228);
 const Color userSelectedTextColor = Color.fromARGB(255, 255, 255, 255);
@@ -123,7 +119,8 @@ class _FileTileState extends State<FileTile> {
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: const Color.fromARGB(99, 0, 0, 0).withOpacity(0.9),
+          backgroundColor:
+              const Color.fromARGB(99, 0, 0, 0).withValues(alpha: 0.9),
           insetPadding: const EdgeInsets.all(10),
           child: Stack(
             alignment: Alignment.centerLeft,
